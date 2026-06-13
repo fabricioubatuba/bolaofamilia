@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Bolão Copa 2026 - Família</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f9f3e6 0%, #fff5e8 100%);
+            min-height: 100vh;
+            color: #2c1810;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #009c3b 0%, #ffdf00 50%, #002776 100%);
+            padding: 16px 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo img {
+            height: 38px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .user-info-panel {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .btn-logout {
+            background: #c0392b;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 13px;
+        }
+
+        .btn-logout:hover {
+            background: #e74c3c;
+            transform: scale(0.97);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            }
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+            border: 1px solid #ffdf00;
+            transition: all 0.2s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card.expired {
+            opacity: 0.7;
+            background: #f5f5f5;
+            border-color: #ccc;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #ffdf00;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .group-badge {
+            background: #009c3b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .game-date {
+            color: #666;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .countdown-timer {
+            background: linear-gradient(135deg, #002776, #001a4d);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 800;
+            text-align: center;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .countdown-timer.expired {
+            background: #c0392b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 16px 0;
+            gap: 8px;
+        }
+
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team-flag {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin: 0 auto 8px;
+            border-radius: 50px;
+            background: #f5f2ec;
+            padding: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .team-name {
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .vs {
+            font-size: 20px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #009c3b, #ffdf00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .score-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .score-input {
+            width: 70px;
+            padding: 12px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            background: #fef5e7;
+            border: 2px solid #ffdf00;
+            border-radius: 20px;
+            color: #009c3b;
+        }
+
+        .score-input:focus {
+            outline: none;
+            border-color: #009c3b;
+            background: white;
+        }
+
+        .score-input:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .btn-bet {
+            background: linear-gradient(135deg, #009c3b, #00b050);
+            width: 100%;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-bet:active {
+            transform: scale(0.98);
+        }
+
+        .btn-bet:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+        }
+
+        .result-tag {
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 24px;
+            text-align: center;
+            margin-top: 12px;
+            font-weight: 700;
+            color: #155724;
+            font-size: 13px;
+        }
+
+        .active-bets-block,
+        .finished-games-block {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #ffe4b5;
+        }
+
+        .active-bets-item {
+            background: #fefaf5;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #ffe0b5;
+            overflow: hidden;
+        }
+
+        .active-bets-header {
+            background: white;
+            padding: 14px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            border-bottom: 2px solid transparent;
+            transition: background 0.2s;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .active-bets-header:hover {
+            background: #fff8ef;
+        }
+
+        .active-bets-header.active {
+            border-bottom-color: #ffdf00;
+            background: #fffef7;
+        }
+
+        .active-bets-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #fffdf9;
+        }
+
+        .active-bets-content.show {
+            max-height: 2000px;
+        }
+
+        .bets-inside-active {
+            padding: 16px;
+            border-top: 1px solid #ffdf80;
+        }
+
+        .accordion-item {
+            background: #fefaf5;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #ffe0b5;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background: white;
+            padding: 14px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            transition: 0.2s;
+            border-bottom: 2px solid transparent;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .accordion-header:hover {
+            background: #fff8ef;
+        }
+        
+        .accordion-header.active {
+            border-bottom-color: #ffdf00;
+            background: #fffef7;
+        }
+
+        .game-info-summary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .game-teams-summary {
+            font-size: 15px;
+            font-weight: 800;
+            color: #002776;
+        }
+        
+        .game-real-result {
+            background: #009c3b20;
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 12px;
+            color: #009c3b;
+        }
+        
+        .expand-icon {
+            font-size: 18px;
+            font-weight: 900;
+            color: #ffc107;
+            transition: transform 0.3s;
+        }
+        
+        .accordion-header.active .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #fffdf9;
+        }
+        
+        .accordion-content.show {
+            max-height: 2000px;
+        }
+        
+        .bets-inside {
+            padding: 16px;
+            border-top: 1px solid #ffdf80;
+        }
+        
+        .bet-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0e0ce;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .bet-row:last-child {
+            border-bottom: none;
+        }
+        
+        .bet-user-name {
+            font-weight: 700;
+            background: #eef2ff;
+            padding: 4px 12px;
+            border-radius: 60px;
+            font-size: 13px;
+        }
+        
+        .bet-palpite {
+            font-weight: 800;
+            background: white;
+            padding: 4px 14px;
+            border-radius: 60px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-size: 14px;
+        }
+        
+        .bet-status {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 60px;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .bet-points {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 60px;
+        }
+        
+        .points-exact { background: #d4edda; color: #155724; }
+        .points-result { background: #cfe2ff; color: #004085; }
+        .points-zero { background: #f1f0f0; color: #6c757d; }
+
+        .ranking-block {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #ffe4b5;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #002776;
+            border-left: 5px solid #ffdf00;
+            padding-left: 14px;
+            margin-bottom: 18px;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .ranking-table th,
+        .ranking-table td {
+            padding: 10px 6px;
+            text-align: left;
+            border-bottom: 1px solid #f0e0ce;
+        }
+
+        .ranking-table th {
+            color: #002776;
+            font-weight: 800;
+        }
+
+        .ranking-table tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .ranking-table tbody tr:hover {
+            background: #fff8ef;
+        }
+
+        .login-card {
+            max-width: 90%;
+            margin: 60px auto;
+            background: white;
+            border-radius: 40px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ffdf00;
+        }
+
+        @media (min-width: 480px) {
+            .login-card {
+                max-width: 400px;
+            }
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            border: 2px solid #ffe0b5;
+            font-size: 16px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .login-card button {
+            background: #009c3b;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 60px;
+            width: 100%;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .alert-message {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            font-size: 12px;
+        }
+
+        .no-games-message {
+            background: white;
+            border-radius: 28px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 24px;
+            border: 1px solid #ffdf00;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            padding: 16px;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 28px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, #009c3b, #ffdf00, #002776);
+            padding: 16px 20px;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .user-points-summary {
+            background: #f0f4ff;
+            padding: 14px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .points-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .breakdown-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: #009c3b;
+        }
+
+        .breakdown-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .game-detail-card {
+            background: #fefaf5;
+            border-radius: 14px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid;
+            font-size: 13px;
+        }
+
+        .game-detail-card.exact {
+            border-left-color: #009c3b;
+            background: linear-gradient(90deg, #e8f5e9, #fff);
+        }
+
+        .game-detail-card.result {
+            border-left-color: #002776;
+            background: linear-gradient(90deg, #e8eaf6, #fff);
+        }
+
+        .game-detail-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .game-detail-teams {
+            font-weight: 800;
+            color: #2c1810;
+            font-size: 13px;
+        }
+
+        .game-detail-points {
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .game-detail-points.exact {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .game-detail-points.result {
+            background: #cfe2ff;
+            color: #004085;
+        }
+
+        .game-detail-scores {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+            font-size: 12px;
+        }
+
+        .empty-points {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 12px;
+            }
+            
+            .team-name {
+                font-size: 13px;
+            }
+
+            .team-flag {
+                width: 50px;
+                height: 50px;
+                padding: 6px;
+            }
+
+            .score-input {
+                width: 60px;
+                font-size: 16px;
+                padding: 10px;
+            }
+            
+            .game-teams-summary {
+                font-size: 13px;
+            }
+            
+            .active-bets-header,
+            .accordion-header {
+                padding: 12px;
+            }
+            
+            .active-bets-content .bets-inside-active,
+            .bets-inside {
+                padding: 12px;
+            }
+            
+            .bet-user-name {
+                font-size: 12px;
+            }
+            
+            .bet-palpite {
+                font-size: 13px;
+                padding: 3px 10px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+            }
+            
+            .game-detail-line {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="login-card">
+            <div>
+                <img src="https://digitalhub.fifa.com/transform/157d23bf-7e13-4d7b-949e-5d27d340987e/WC26_Logo?io=transform:fill&quality=75" alt="Logo Copa 2026" style="width: 70px; height: auto;">
+            </div>
+            <h1 style="color:#009c3b; margin: 10px 0; font-size: 24px;">Bolão Copa 2026</h1>
+            <p style="color:#666; font-size: 14px;">Acesse com seu telefone cadastrado</p>
+            <div class="alert-message">
+                ℹ️ Formato 12999999999
+            </div>
+            <input type="tel" id="phoneNumberInput" placeholder="Digite apenas números" autocomplete="off">
+            <button id="loginBtn">🔓 ENTRAR</button>
+            <div id="savedLoginInfo" style="margin-top: 12px; font-size: 11px; color: #888;"></div>
+        </div>
+    </div>
+
+    <div id="appContent" style="display: none;">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://digitalhub.fifa.com/transform/157d23bf-7e13-4d7b-949e-5d27d340987e/WC26_Logo?io=transform:fill&quality=75" alt="Logo Copa 2026"> Bolão Copa 2026
+                </div>
+                <div class="user-info-panel">
+                    <span>👤 <strong id="currentUserNameDisplay">--</strong></span>
+                    <button class="btn-logout" id="logoutBtn">Sair</button>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div id="activeGamesSection">
+                <div class="section-title">🎯 Próximos Jogos</div>
+                <div id="gamesGridContainer" class="games-grid"></div>
+            </div>
+
+            <div class="active-bets-block">
+                <div class="section-title">📋 Palpites de Jogos Ativos</div>
+                <div id="activeBetsContainer">
+                    <div style="text-align:center; color:#888; padding: 30px;">Carregando palpites...</div>
+                </div>
+            </div>
+
+            <div class="finished-games-block">
+                <div class="section-title">🎬 Histórico de Jogos Finalizados</div>
+                <div id="finishedGamesAccordion">
+                    <div style="text-align:center; color:#888; padding: 30px;">Carregando histórico...</div>
+                </div>
+            </div>
+
+            <div class="ranking-block">
+                <div class="section-title">🏅 Ranking Geral</div>
+                <div id="rankingTableContainer">
+                    <div style="text-align:center; padding: 30px;">Carregando ranking...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7fJLxu9YGvNIuXI0dcFAKEQD8RV2yeCs",
+            authDomain: "copa-e440d.firebaseapp.com",
+            databaseURL: "https://copa-e440d-default-rtdb.firebaseio.com",
+            projectId: "copa-e440d",
+            storageBucket: "copa-e440d.firebasestorage.app",
+            messagingSenderId: "920083988369",
+            appId: "1:920083988369:web:2350306b5eb3b348816430"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let currentUser = null;
+        let countdownIntervals = {};
+        let serverTimeOffset = 0;
+        let serverTimeInitialized = false;
+
+        const STORAGE_KEY = 'bolao_copa_user';
+
+        async function getServerTimestamp() {
+            const offsetRef = db.ref('.info/serverTimeOffset');
+            return new Promise((resolve) => {
+                offsetRef.once('value', (snapshot) => {
+                    serverTimeOffset = snapshot.val() || 0;
+                    serverTimeInitialized = true;
+                    resolve(Date.now() + serverTimeOffset);
+                });
+            });
+        }
+
+        function getCurrentServerTime() {
+            return serverTimeInitialized ? Date.now() + serverTimeOffset : Date.now();
+        }
+
+        // CORREÇÃO DO FUSO HORÁRIO: Converte horário de Brasília (UTC-3) para UTC
+        // O usuário cadastra no formato "dd/MM/yyyy" e "HH:MM" no horário de Brasília
+        // Esta função retorna o timestamp UTC correspondente
+        function parseGameDateTime(dateStr, timeStr) {
+            if (!dateStr) return null;
+            const parts = dateStr.split('/');
+            if (parts.length !== 3) return null;
+            
+            let time = timeStr || "12:00";
+            time = time.replace('h', ':').replace('H', ':');
+            const [hours, minutes] = time.split(':');
+            
+            const year = parseInt(parts[2]);
+            const month = parseInt(parts[1]) - 1;
+            const day = parseInt(parts[0]);
+            const hourBrasilia = parseInt(hours || '12');
+            const minute = parseInt(minutes || '00');
+            
+            // Criar data no horário de Brasília (UTC-3) e converter para UTC
+            // new Date(year, month, day, hourBrasilia, minute) cria no fuso local do navegador
+            // Para evitar ambiguidade, usamos o método Date.UTC com ajuste manual de +3 horas
+            // Pois Brasília (UTC-3) = UTC - 3 horas, então para UTC somamos 3 horas
+            const utcTimestamp = Date.UTC(year, month, day, hourBrasilia + 3, minute);
+            
+            return utcTimestamp;
+        }
+
+        function saveUserToLocalStorage(user) {
+            if (user) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    phone: user.phone, name: user.name, uid: user.uid, savedAt: Date.now()
+                }));
+            }
+        }
+
+        function loadUserFromLocalStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const userData = JSON.parse(saved);
+                    if (Date.now() - userData.savedAt < 30 * 24 * 60 * 60 * 1000) {
+                        return { phone: userData.phone, name: userData.name, uid: userData.uid };
+                    }
+                } catch(e) {}
+            }
+            return null;
+        }
+
+        function removeUserFromLocalStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
+        function formatPhone(phoneRaw) {
+            return phoneRaw.replace(/\D/g, '');
+        }
+
+        function normalizeGoogleDriveImage(url) { 
+            if(!url) return ""; 
+            try{ 
+                url=url.trim(); 
+                if(url.includes("/file/d/")){ 
+                    const id=url.split("/file/d/")[1].split("/")[0]; 
+                    return `https://lh3.googleusercontent.com/d/${id}`; 
+                } 
+                if(url.includes("drive.google.com/open?id=")){ 
+                    const id=url.split('id=')[1].split('&')[0]; 
+                    return `https://lh3.googleusercontent.com/d/${id}`; 
+                } 
+                return url; 
+            } catch(e){ 
+                return ''; 
+            }
+        }
+
+        function getTimeRemainingFromServer(gameTimestamp) {
+            if (!gameTimestamp) return { total: 0, expired: true };
+            const diff = gameTimestamp - getCurrentServerTime();
+            if (diff <= 0) return { total: 0, expired: true };
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            return { total: diff, hours, minutes, seconds, expired: false };
+        }
+
+        function formatCountdown(remaining) {
+            if (remaining.expired) return "⏰ ENCERRADO";
+            return `⏱️ ${remaining.hours.toString().padStart(2, '0')}:${remaining.minutes.toString().padStart(2, '0')}:${remaining.seconds.toString().padStart(2, '0')}`;
+        }
+
+function startCountdown(gameId, gameTimestamp, onUpdate) {
+
+    if (countdownIntervals[gameId]) {
+        clearInterval(countdownIntervals[gameId]);
+    }
+
+    let jaExpirou = false;
+
+    const updateTimer = () => {
+
+        const remaining = getTimeRemainingFromServer(gameTimestamp);
+
+        onUpdate(remaining);
+
+        if (remaining.expired && !jaExpirou) {
+
+            jaExpirou = true;
+
+            clearInterval(countdownIntervals[gameId]);
+
+            delete countdownIntervals[gameId];
+
+            atualizarCardExpirado(gameId);
+
+            loadActiveBets();
+
+        }
+
+    };
+
+    updateTimer();
+
+    countdownIntervals[gameId] = setInterval(updateTimer, 1000);
+
+}
+
+function atualizarCardExpirado(gameId) {
+
+    const timer = document.getElementById("countdown_" + gameId);
+
+    if (!timer) return;
+
+    timer.innerHTML = "⏰ ENCERRADO";
+    timer.classList.add("expired");
+
+    const card = timer.closest(".game-card");
+
+    if (!card) return;
+
+    card.classList.add("expired");
+
+    const btn = card.querySelector(".btn-bet");
+
+    if (btn) {
+
+        btn.remove();
+
+    }
+
+    card.querySelectorAll(".score-input").forEach(input => {
+
+        input.disabled = true;
+
+    });
+
+    const inputs = card.querySelector(".score-inputs");
+
+    if (inputs) {
+
+        inputs.insertAdjacentHTML(
+            "afterend",
+            `<div class="result-tag" style="background:#f8d7da;">
+                ⏰ Prazo encerrado!
+            </div>`
+        );
+
+    }
+
+}
+
+        async function fetchUserByPhone(phoneNumber) {
+            const snapshot = await db.ref('users').once('value');
+            const users = snapshot.val() || {};
+            for (let key in users) {
+                if (users[key].phone === phoneNumber) {
+                    return { uid: key, ...users[key] };
+                }
+            }
+            return null;
+        }
+
+        async function performLogin(phoneClean, silent = false) {
+            const userRecord = await fetchUserByPhone(phoneClean);
+            if (!userRecord) {
+                if (!silent) alert("❌ Número não cadastrado.");
+                return false;
+            }
+            currentUser = { phone: phoneClean, name: userRecord.name || "Usuário", uid: userRecord.uid };
+            saveUserToLocalStorage(currentUser);
+            if (!silent) alert(`✅ Bem-vindo(a), ${currentUser.name}!`);
+            loginScreen.style.display = "none";
+            appContent.style.display = "block";
+            document.getElementById('currentUserNameDisplay').innerText = currentUser.name;
+            await loadAllReleasedGames();
+            await loadActiveBets();
+            db.ref('games').on('value', () => {
+
+    loadAllReleasedGames();
+
+});
+            db.ref('bets').on('value', () => {
+
+    loadFinishedGamesHistory();
+
+    loadRanking();
+
+    loadActiveBets();
+
+});
+            db.ref('results').on('value', () => {
+
+    loadAllReleasedGames();
+
+    loadFinishedGamesHistory();
+
+    loadRanking();
+
+    loadActiveBets();
+
+});
+            return true;
+        }
+
+        async function doLogin() {
+            let rawPhone = document.getElementById('phoneNumberInput').value.trim();
+            if (!rawPhone) { alert("Digite seu número"); return; }
+            const phoneClean = formatPhone(rawPhone);
+            if (phoneClean.length < 10) { alert("Número inválido"); return; }
+            await getServerTimestamp();
+            await performLogin(phoneClean, false);
+        }
+
+        async function tryAutoLogin() {
+            const savedUser = loadUserFromLocalStorage();
+            if (savedUser && savedUser.phone) {
+                await getServerTimestamp();
+                await performLogin(savedUser.phone, true);
+            } else {
+                const infoDiv = document.getElementById('savedLoginInfo');
+                const saved = loadUserFromLocalStorage();
+                if (saved && infoDiv) infoDiv.innerHTML = `🔐 Login salvo: ${saved.name}<br><small>Clique em ENTRAR</small>`;
+            }
+        }
+
+        async function loadTeamsFlags() {
+            const snap = await db.ref('teamsFlags').once('value');
+            return snap.val() || {};
+        }
+
+        async function hasUserBetOnGame(gameId) {
+            if (!currentUser) return false;
+            const betsSnap = await db.ref('bets').once('value');
+            const bets = betsSnap.val() || {};
+            for (let key in bets) {
+                if (bets[key].userId === currentUser.phone && bets[key].gameId === gameId) return true;
+            }
+            return false;
+        }
+
+        async function loadAllReleasedGames() {
+            const gamesSnap = await db.ref('games').once('value');
+            const games = gamesSnap.val() || {};
+            const resultsSnap = await db.ref('results').once('value');
+            const results = resultsSnap.val() || {};
+            const teamsFlags = await loadTeamsFlags();
+            let releasedGames = [];
+            for (let [id, game] of Object.entries(games)) {
+                if (game.released === true && !results[id]) {
+                    releasedGames.push({ id, ...game, gameTimestamp: parseGameDateTime(game.date, game.time) });
+                }
+            }
+            releasedGames.sort((a, b) => (a.gameTimestamp || 0) - (b.gameTimestamp || 0));
+            await renderAllGames(releasedGames, teamsFlags);
+            loadFinishedGamesHistory();
+            loadRanking();
+        }
+
+        async function renderAllGames(games, teamsFlags) {
+            if (!games.length) {
+                document.getElementById('gamesGridContainer').innerHTML = `<div class="no-games-message"><span style="font-size: 48px;">🎯</span><h3>Nenhum jogo liberado</h3></div>`;
+                return;
+            }
+            let html = '';
+            for (const game of games) {
+                const [teamA, teamB] = game.teams.split(' x ');
+                const flagUrlA = teamsFlags[teamA] ? normalizeGoogleDriveImage(teamsFlags[teamA]) : '';
+                const flagUrlB = teamsFlags[teamB] ? normalizeGoogleDriveImage(teamsFlags[teamB]) : '';
+                const userHasBet = await hasUserBetOnGame(game.id);
+                const isExpired = getTimeRemainingFromServer(game.gameTimestamp).expired;
+                html += `<div class="game-card ${isExpired ? 'expired' : ''}">
+                    <div class="game-header">
+                        <span class="group-badge">${game.group || 'Fase de Grupos'}</span>
+                        <span class="game-date">📅 ${game.date} - ${game.time || 'TBD'}</span>
+                    </div>
+                    <div class="countdown-timer" id="countdown_${game.id}">⏳ Carregando...</div>
+                    <div class="teams">
+                        <div class="team">${flagUrlA ? `<img src="${flagUrlA}" class="team-flag">` : '<div class="team-flag" style="font-size:40px;">🏳️</div>'}<div class="team-name">${escapeHtml(teamA)}</div></div>
+                        <div class="vs">VS</div>
+                        <div class="team">${flagUrlB ? `<img src="${flagUrlB}" class="team-flag">` : '<div class="team-flag" style="font-size:40px;">🏳️</div>'}<div class="team-name">${escapeHtml(teamB)}</div></div>
+                    </div>
+                    ${!userHasBet && !isExpired ? `<div class="score-inputs"><input type="number" id="scoreHome_${game.id}" class="score-input" placeholder="0"><span style="font-size:24px;">x</span><input type="number" id="scoreAway_${game.id}" class="score-input" placeholder="0"></div>
+                    <button class="btn-bet" data-game-id="${game.id}" data-teams="${game.teams}" data-game-timestamp="${game.gameTimestamp}">🎯 Enviar Palpite</button>
+                    <div style="font-size:11px; text-align:center; margin-top:10px;">Acertar placar = 6pts | Resultado = 3pts</div>` : userHasBet ? `<div class="result-tag">✅ Você já enviou seu palpite!</div>` : `<div class="result-tag" style="background:#f8d7da;">⏰ Prazo encerrado!</div>`}
+                </div>`;
+            }
+            document.getElementById('gamesGridContainer').innerHTML = html;
+            for (const game of games) {
+                const el = document.getElementById(`countdown_${game.id}`);
+                if (el && game.gameTimestamp) {
+                    startCountdown(game.id, game.gameTimestamp, (r) => { if(el) { el.textContent = formatCountdown(r); if(r.expired) el.classList.add('expired'); } });
+                }
+            }
+            document.querySelectorAll('.btn-bet').forEach(btn => btn.addEventListener('click', async (e) => {
+                const gameId = btn.dataset.gameId, teamsText = btn.dataset.teams, ts = parseInt(btn.dataset.gameTimestamp);
+                if (getTimeRemainingFromServer(ts).expired) { alert("Prazo expirado!"); return; }
+                await submitBetForGame(gameId, teamsText, ts);
+            }));
+        }
+
+        async function submitBetForGame(gameId, teamsText, gameTimestamp) {
+            if (!currentUser) return;
+            if (getTimeRemainingFromServer(gameTimestamp).expired) { alert("Prazo expirado!"); return; }
+            const scoreHome = parseInt(document.getElementById(`scoreHome_${gameId}`).value);
+            const scoreAway = parseInt(document.getElementById(`scoreAway_${gameId}`).value);
+            if (isNaN(scoreHome) || isNaN(scoreAway)) { alert("Preencha o placar"); return; }
+            if (await hasUserBetOnGame(gameId)) { alert("Você já apostou!"); return; }
+            await db.ref('bets').push({ userId: currentUser.phone, userName: currentUser.name, gameId, scoreA: scoreHome, scoreB: scoreAway, teams: teamsText, timestamp: firebase.database.ServerValue.TIMESTAMP });
+            alert(`✅ Palpite: ${scoreHome} x ${scoreAway}`);
+            await loadActiveBets();
+        }
+
+        async function loadActiveBets() {
+            const gamesSnap = await db.ref('games').once('value');
+            const games = gamesSnap.val() || {};
+            const resultsSnap = await db.ref('results').once('value');
+            const results = resultsSnap.val() || {};
+            const betsSnap = await db.ref('bets').once('value');
+            const bets = betsSnap.val() || {};
+            const teamsFlags = await loadTeamsFlags();
+            
+            let activeGames = [];
+            for (let [id, game] of Object.entries(games)) {
+                const gameTimestamp = parseGameDateTime(game.date, game.time);
+                const isExpired = getTimeRemainingFromServer(gameTimestamp).expired;
+                if (game.released === true && !results[id] && !isExpired) {
+                    activeGames.push({ id, ...game, gameTimestamp });
+                }
+            }
+            
+            if (!activeGames.length) {
+                document.getElementById('activeBetsContainer').innerHTML = '<div style="text-align:center; padding:30px;">⚽ Nenhum jogo ativo no momento.</div>';
+                return;
+            }
+            
+            activeGames.sort((a,b) => (a.gameTimestamp || 0) - (b.gameTimestamp || 0));
+            let html = '';
+            
+            for (let game of activeGames) {
+                const [teamA, teamB] = game.teams.split(' x ');
+                const flagUrlA = teamsFlags[teamA] ? normalizeGoogleDriveImage(teamsFlags[teamA]) : '';
+                const flagUrlB = teamsFlags[teamB] ? normalizeGoogleDriveImage(teamsFlags[teamB]) : '';
+                const gameId = game.id;
+                
+                let gameBets = [];
+                for (let key in bets) {
+                    if (bets[key].gameId === gameId) {
+                        gameBets.push(bets[key]);
+                    }
+                }
+                gameBets.sort((a,b) => (a.userName || '').localeCompare(b.userName || ''));
+                
+                let betsHtml = '';
+                if (gameBets.length === 0) {
+                    betsHtml = '<div style="padding: 16px; text-align:center;">Nenhum palpite registrado para este jogo ainda.</div>';
+                } else {
+                    betsHtml = gameBets.map(bet => `
+                        <div class="bet-row">
+                            <span class="bet-user-name">${escapeHtml(bet.userName)}</span>
+                            <span class="bet-palpite">${bet.scoreA} x ${bet.scoreB}</span>
+                            <span class="bet-status">⏳</span>
+                        </div>
+                    `).join('');
+                }
+                
+                const gameDateStr = `${game.date} ${game.time || ''}`;
+                
+                html += `
+                    <div class="active-bets-item">
+                        <div class="active-bets-header" onclick="toggleActiveBets(this)">
+                            <div class="game-info-summary">
+                                ${flagUrlA ? `<img src="${flagUrlA}" style="width:32px; height:32px; object-fit:contain;">` : '🏳️'}
+                                <span class="game-teams-summary">${escapeHtml(teamA)} x ${escapeHtml(teamB)}</span>
+                                ${flagUrlB ? `<img src="${flagUrlB}" style="width:32px; height:32px; object-fit:contain;">` : '🏳️'}
+                                <span class="game-date">📅 ${gameDateStr}</span>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                        <div class="active-bets-content">
+                            <div class="bets-inside-active">
+                                <div style="font-weight:700; margin-bottom:12px;">💬 Palpites (${gameBets.length}):</div>
+                                ${betsHtml}
+                                <div style="font-size:11px; margin-top:12px; text-align:center; color:#888;">* Jogo ainda não realizado - Resultado pendente</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('activeBetsContainer').innerHTML = html;
+        }
+        
+        window.toggleActiveBets = function(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+            } else {
+                content.classList.add('show');
+            }
+        }
+
+        async function loadFinishedGamesHistory() {
+            const gamesSnap = await db.ref('games').once('value');
+            const games = gamesSnap.val() || {};
+            const resultsSnap = await db.ref('results').once('value');
+            const results = resultsSnap.val() || {};
+            const betsSnap = await db.ref('bets').once('value');
+            const bets = betsSnap.val() || {};
+            const teamsFlags = await loadTeamsFlags();
+            
+            let finishedGames = [];
+            for (let [id, game] of Object.entries(games)) {
+                if (results[id]) {
+                    finishedGames.push({ id, ...game, result: results[id] });
+                }
+            }
+            
+            if (!finishedGames.length) { 
+                document.getElementById('finishedGamesAccordion').innerHTML = '<div style="text-align:center; padding:30px;">⚽ Nenhum jogo finalizado.</div>'; 
+                return; 
+            }
+            
+            finishedGames.sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+            let html = '';
+            
+            for (let game of finishedGames) {
+                const [teamA, teamB] = game.teams.split(' x ');
+                const flagUrlA = teamsFlags[teamA] ? normalizeGoogleDriveImage(teamsFlags[teamA]) : '';
+                const flagUrlB = teamsFlags[teamB] ? normalizeGoogleDriveImage(teamsFlags[teamB]) : '';
+                const realScore = `${game.result.scoreA} x ${game.result.scoreB}`;
+                
+                let gameBets = [];
+                for (let key in bets) {
+                    if (bets[key].gameId === game.id) {
+                        gameBets.push(bets[key]);
+                    }
+                }
+                
+                const betsWithPoints = gameBets.map(bet => {
+                    let points = 0, type = 'zero';
+                    if (bet.scoreA === game.result.scoreA && bet.scoreB === game.result.scoreB) { 
+                        points = 6; type = 'exact'; 
+                    } else {
+                        const betWinner = bet.scoreA > bet.scoreB ? 'A' : bet.scoreB > bet.scoreA ? 'B' : 'draw';
+                        const realWinner = game.result.scoreA > game.result.scoreB ? 'A' : game.result.scoreB > game.result.scoreA ? 'B' : 'draw';
+                        if (betWinner === realWinner) { points = 3; type = 'result'; }
+                    }
+                    return { ...bet, points, type };
+                });
+                
+                betsWithPoints.sort((a,b) => b.points - a.points);
+                
+                let betsHtml = betsWithPoints.length ? betsWithPoints.map(bet => `
+                    <div class="bet-row">
+                        <span class="bet-user-name">${escapeHtml(bet.userName)}</span>
+                        <span class="bet-palpite">${bet.scoreA} x ${bet.scoreB}</span>
+                        <span class="bet-points ${bet.type === 'exact' ? 'points-exact' : bet.type === 'result' ? 'points-result' : 'points-zero'}">${bet.type === 'exact' ? '🎯 +6 pts' : bet.type === 'result' ? '✅ +3 pts' : '❌ 0 pts'}</span>
+                    </div>
+                `).join('') : '<div style="padding:16px; text-align:center;">Sem palpites</div>';
+                
+                html += `
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="game-info-summary">
+                                ${flagUrlA ? `<img src="${flagUrlA}" style="width:32px;">` : '🏳️'}
+                                <span class="game-teams-summary">${escapeHtml(teamA)} x ${escapeHtml(teamB)}</span>
+                                ${flagUrlB ? `<img src="${flagUrlB}" style="width:32px;">` : '🏳️'}
+                                <span class="game-real-result">📋 ${realScore}</span>
+                                <span class="game-date">📅 ${game.date}</span>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="bets-inside">
+                                <div style="font-weight:700; margin-bottom:12px;">💬 Palpites (${betsWithPoints.length}):</div>
+                                ${betsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('finishedGamesAccordion').innerHTML = html;
+        }
+        
+        window.toggleAccordion = function(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+            } else {
+                content.classList.add('show');
+            }
+        }
+
+async function loadRanking() {
+    const betsSnap = await db.ref('bets').once('value');
+    const bets = betsSnap.val() || {};
+
+    const resultsSnap = await db.ref('results').once('value');
+    const results = resultsSnap.val() || {};
+
+    const usersMap = new Map();
+
+    for (let key in bets) {
+
+        const bet = bets[key];
+        const result = results[bet.gameId];
+
+        if (!result) continue;
+
+        if (!usersMap.has(bet.userId)) {
+            usersMap.set(bet.userId, {
+                name: bet.userName,
+                total: 0,
+                exact: 0,
+                scoredGames: 0
+            });
+        }
+
+        const user = usersMap.get(bet.userId);
+
+        // Acertou o placar exato
+        if (bet.scoreA === result.scoreA && bet.scoreB === result.scoreB) {
+
+            user.total += 6;
+            user.exact += 1;
+            user.scoredGames += 1;
+
+        } else {
+
+            const betWinner =
+                bet.scoreA > bet.scoreB ? 'A' :
+                bet.scoreB > bet.scoreA ? 'B' : 'draw';
+
+            const realWinner =
+                result.scoreA > result.scoreB ? 'A' :
+                result.scoreB > result.scoreA ? 'B' : 'draw';
+
+            if (betWinner === realWinner) {
+                user.total += 3;
+                user.scoredGames += 1;
+            }
+        }
+    }
+
+    let ranking = Array.from(usersMap.entries())
+        .map(([phone, data]) => ({
+            phone,
+            name: data.name,
+            points: data.total,
+            exact: data.exact,
+            scoredGames: data.scoredGames
+        }))
+        .sort((a, b) => {
+
+            // 1º critério: Pontos
+            if (b.points !== a.points)
+                return b.points - a.points;
+
+            // 2º critério: Placares exatos
+            if (b.exact !== a.exact)
+                return b.exact - a.exact;
+
+            // 3º critério: Jogos pontuados
+            if (b.scoredGames !== a.scoredGames)
+                return b.scoredGames - a.scoredGames;
+
+            // Empate real
+            return 0;
+        });
+
+    if (!ranking.length) {
+        document.getElementById('rankingTableContainer').innerHTML =
+            '<div style="padding:20px; text-align:center;">Nenhuma pontuação ainda.</div>';
+        return;
+    }
+
+    let html = '<table class="ranking-table">';
+    html += '<thead>';
+    html += '<tr>';
+    html += '<th>Pos</th>';
+    html += '<th>Participante</th>';
+    html += '<th>Pontos</th>';
+    html += '</tr>';
+    html += '</thead><tbody>';
+
+    let posicao = 1;
+
+    ranking.forEach((user, index) => {
+
+        if (index > 0) {
+
+            const anterior = ranking[index - 1];
+
+            const empatado =
+                user.points === anterior.points &&
+                user.exact === anterior.exact &&
+                user.scoredGames === anterior.scoredGames;
+
+            if (!empatado) {
+                posicao = index + 1;
+            }
+        }
+
+        let medalha = "";
+
+        if (posicao === 1) medalha = "🥇 ";
+        else if (posicao === 2) medalha = "🥈 ";
+        else if (posicao === 3) medalha = "🥉 ";
+
+        html += `
+            <tr onclick="showUserPointsModal('${user.phone}', '${escapeHtml(user.name)}', ${user.points})">
+                <td><strong>${medalha}${posicao}º</strong></td>
+                <td>${escapeHtml(user.name)}</td>
+                <td><strong style="color:#009c3b;">${user.points}</strong></td>
+            </tr>
+        `;
+    });
+
+    html += "</tbody></table>";
+
+    html += `
+        <div style="font-size:11px; margin-top:12px; text-align:center;">
+            ⭐ Clique no participante para ver detalhes
+        </div>
+    `;
+
+    document.getElementById('rankingTableContainer').innerHTML = html;
+}
+
+        async function showUserPointsModal(userPhone, userName, userPoints) {
+            const betsSnap = await db.ref('bets').once('value');
+            const bets = betsSnap.val() || {};
+            const resultsSnap = await db.ref('results').once('value');
+            const results = resultsSnap.val() || {};
+            const gamesSnap = await db.ref('games').once('value');
+            const games = gamesSnap.val() || {};
+            
+            const userBets = [];
+            for (let key in bets) {
+                const bet = bets[key];
+                if (bet.userId === userPhone && results[bet.gameId]) {
+                    const game = games[bet.gameId];
+                    const result = results[bet.gameId];
+                    if (game && result) {
+                        let points = 0, type = '';
+                        if (bet.scoreA === result.scoreA && bet.scoreB === result.scoreB) { 
+                            points = 6; type = 'exact'; 
+                        } else {
+                            const betWinner = bet.scoreA > bet.scoreB ? 'A' : bet.scoreB > bet.scoreA ? 'B' : 'draw';
+                            const realWinner = result.scoreA > result.scoreB ? 'A' : result.scoreB > result.scoreA ? 'B' : 'draw';
+                            if (betWinner === realWinner) { points = 3; type = 'result'; }
+                        }
+                        if (points > 0) {
+                            userBets.push({ 
+                                gameName: game.teams, 
+                                gameDate: game.date, 
+                                betScore: `${bet.scoreA} x ${bet.scoreB}`, 
+                                realScore: `${result.scoreA} x ${result.scoreB}`, 
+                                points, 
+                                type 
+                            });
+                        }
+                    }
+                }
+            }
+            
+            userBets.sort((a,b) => b.points - a.points);
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h3>${escapeHtml(userName)} - ${userPoints} pts</h3>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="user-points-summary">
+                            <strong>Total: ${userPoints} pontos</strong>
+                            <div class="points-breakdown">
+                                <div class="breakdown-item">
+                                    <div class="breakdown-number">${userBets.filter(b=>b.type==='exact').length}</div>
+                                    <div class="breakdown-label">Placar Exato (6pts)</div>
+                                </div>
+                                <div class="breakdown-item">
+                                    <div class="breakdown-number">${userBets.filter(b=>b.type==='result').length}</div>
+                                    <div class="breakdown-label">Resultado (3pts)</div>
+                                </div>
+                            </div>
+                        </div>
+                        ${userBets.length ? userBets.map(bet => `
+                            <div class="game-detail-card ${bet.type}">
+                                <div class="game-detail-line">
+                                    <span class="game-detail-teams">📅 ${bet.gameDate} ${escapeHtml(bet.gameName)} [${bet.realScore}]</span>
+                                    <span class="game-detail-points ${bet.type}">${bet.type === 'exact' ? '🎯 +6pts' : '✅ +3pts'}</span>
+                                </div>
+                                <div class="game-detail-scores">
+                                    <span>Palpite: ${bet.betScore}</span>
+                                </div>
+                            </div>
+                        `).join('') : '<div class="empty-points">⚽ Nenhum ponto conquistado ainda.</div>'}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', e => { if(e.target === modal) modal.remove(); });
+        }
+
+        function escapeHtml(str) { 
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); 
+        }
+
+        function logout() {
+            for (let i in countdownIntervals) clearInterval(countdownIntervals[i]);
+            currentUser = null;
+            removeUserFromLocalStorage();
+            loginScreen.style.display = "flex";
+            appContent.style.display = "none";
+            document.getElementById('phoneNumberInput').value = '';
+            alert("Você saiu do bolão.");
+        }
+
+        document.getElementById('loginBtn').onclick = doLogin;
+        document.getElementById('logoutBtn').onclick = logout;
+        document.getElementById('phoneNumberInput').addEventListener('keypress', e => { if(e.key === 'Enter') doLogin(); });
+        tryAutoLogin();
+    </script>
+</body>
+</html>
