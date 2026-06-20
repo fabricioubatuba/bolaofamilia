@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Bolão Copa 2026 - Família</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js">
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -25,7 +27,7 @@
         .header {
             background: linear-gradient(90deg, #009c3b 0%, #ffdf00 50%, #002776 100%);
             padding: 16px 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             border-bottom-left-radius: 24px;
             border-bottom-right-radius: 24px;
             position: sticky;
@@ -47,7 +49,7 @@
             font-size: 18px;
             font-weight: 800;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -56,11 +58,11 @@
         .logo img {
             height: 38px;
             width: auto;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
         .user-info-panel {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(8px);
             padding: 6px 16px;
             border-radius: 60px;
@@ -95,6 +97,66 @@
             padding: 0 16px;
         }
 
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: white;
+            border-radius: 60px;
+            padding: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid #ffe4b5;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 40px;
+            background: transparent;
+            font-weight: 700;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background: #f5f0e8;
+            color: #2c1810;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #009c3b, #00b050);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 156, 59, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .games-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -112,7 +174,7 @@
             background: white;
             border-radius: 28px;
             padding: 20px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
             border: 1px solid #ffdf00;
             transition: all 0.2s ease;
             height: 100%;
@@ -170,8 +232,13 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
         }
 
         .teams {
@@ -195,7 +262,7 @@
             border-radius: 50px;
             background: #f5f2ec;
             padding: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .team-name {
@@ -282,7 +349,7 @@
             border-radius: 28px;
             padding: 20px;
             margin-top: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid #ffe4b5;
         }
 
@@ -354,11 +421,11 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .accordion-header:hover {
             background: #fff8ef;
         }
-        
+
         .accordion-header.active {
             border-bottom-color: #ffdf00;
             background: #fffef7;
@@ -370,13 +437,13 @@
             gap: 10px;
             flex-wrap: wrap;
         }
-        
+
         .game-teams-summary {
             font-size: 15px;
             font-weight: 800;
             color: #002776;
         }
-        
+
         .game-real-result {
             background: #009c3b20;
             padding: 4px 10px;
@@ -384,14 +451,14 @@
             font-size: 12px;
             color: #009c3b;
         }
-        
+
         .expand-icon {
             font-size: 18px;
             font-weight: 900;
             color: #ffc107;
             transition: transform 0.3s;
         }
-        
+
         .accordion-header.active .expand-icon {
             transform: rotate(180deg);
         }
@@ -402,16 +469,16 @@
             transition: max-height 0.3s ease-out;
             background: #fffdf9;
         }
-        
+
         .accordion-content.show {
             max-height: 2000px;
         }
-        
+
         .bets-inside {
             padding: 16px;
             border-top: 1px solid #ffdf80;
         }
-        
+
         .bet-row {
             display: flex;
             justify-content: space-between;
@@ -421,11 +488,11 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        
+
         .bet-row:last-child {
             border-bottom: none;
         }
-        
+
         .bet-user-name {
             font-weight: 700;
             background: #eef2ff;
@@ -433,16 +500,16 @@
             border-radius: 60px;
             font-size: 13px;
         }
-        
+
         .bet-palpite {
             font-weight: 800;
             background: white;
             padding: 4px 14px;
             border-radius: 60px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             font-size: 14px;
         }
-        
+
         .bet-status {
             font-size: 12px;
             font-weight: 700;
@@ -458,17 +525,26 @@
             padding: 4px 12px;
             border-radius: 60px;
         }
-        
-        .points-exact { background: #d4edda; color: #155724; }
-        .points-result { background: #cfe2ff; color: #004085; }
-        .points-zero { background: #f1f0f0; color: #6c757d; }
+
+        .points-exact {
+            background: #d4edda;
+            color: #155724;
+        }
+        .points-result {
+            background: #cfe2ff;
+            color: #004085;
+        }
+        .points-zero {
+            background: #f1f0f0;
+            color: #6c757d;
+        }
 
         .ranking-block {
             background: white;
             border-radius: 28px;
             padding: 20px;
             margin-top: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid #ffe4b5;
         }
 
@@ -571,7 +647,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -587,13 +663,19 @@
             width: 100%;
             max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             animation: modalFadeIn 0.3s ease;
         }
 
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .modal-header {
@@ -613,7 +695,7 @@
         }
 
         .modal-close {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
             font-size: 24px;
@@ -726,7 +808,7 @@
             .container {
                 padding: 0 12px;
             }
-            
+
             .team-name {
                 font-size: 13px;
             }
@@ -742,37 +824,49 @@
                 font-size: 16px;
                 padding: 10px;
             }
-            
+
             .game-teams-summary {
                 font-size: 13px;
             }
-            
+
             .active-bets-header,
             .accordion-header {
                 padding: 12px;
             }
-            
+
             .active-bets-content .bets-inside-active,
             .bets-inside {
                 padding: 12px;
             }
-            
+
             .bet-user-name {
                 font-size: 12px;
             }
-            
+
             .bet-palpite {
                 font-size: 13px;
                 padding: 3px 10px;
             }
-            
+
             .section-title {
                 font-size: 16px;
             }
-            
+
             .game-detail-line {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .tab-btn {
+                font-size: 11px;
+                padding: 8px 10px;
+                min-width: 80px;
+            }
+
+            .tabs-container {
+                border-radius: 30px;
+                padding: 4px;
+                gap: 4px;
             }
         }
     </style>
@@ -808,31 +902,45 @@
             </div>
         </div>
         <div class="container">
-            <div id="activeGamesSection">
+
+            <!-- Tabs -->
+            <div class="tabs-container" id="tabsContainer">
+                <button class="tab-btn active" data-tab="tab1">🎯 Próximos Jogos</button>
+                <button class="tab-btn" data-tab="tab2">📋 Palpites Ativos</button>
+                <button class="tab-btn" data-tab="tab3">🎬 Histórico</button>
+                <button class="tab-btn" data-tab="tab4">🏅 Ranking</button>
+            </div>
+
+            <!-- Tab 1: Próximos Jogos -->
+            <div class="tab-content active" id="tab1">
                 <div class="section-title">🎯 Próximos Jogos</div>
                 <div id="gamesGridContainer" class="games-grid"></div>
             </div>
 
-            <div class="active-bets-block">
+            <!-- Tab 2: Palpites Ativos -->
+            <div class="tab-content" id="tab2">
                 <div class="section-title">📋 Palpites de Jogos Ativos</div>
                 <div id="activeBetsContainer">
                     <div style="text-align:center; color:#888; padding: 30px;">Carregando palpites...</div>
                 </div>
             </div>
 
-            <div class="finished-games-block">
+            <!-- Tab 3: Histórico -->
+            <div class="tab-content" id="tab3">
                 <div class="section-title">🎬 Histórico de Jogos Finalizados</div>
                 <div id="finishedGamesAccordion">
                     <div style="text-align:center; color:#888; padding: 30px;">Carregando histórico...</div>
                 </div>
             </div>
 
-            <div class="ranking-block">
+            <!-- Tab 4: Ranking -->
+            <div class="tab-content" id="tab4">
                 <div class="section-title">🏅 Ranking Geral</div>
                 <div id="rankingTableContainer">
                     <div style="text-align:center; padding: 30px;">Carregando ranking...</div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -871,37 +979,40 @@
             return serverTimeInitialized ? Date.now() + serverTimeOffset : Date.now();
         }
 
-        // CORREÇÃO DO FUSO HORÁRIO: Converte horário de Brasília (UTC-3) para UTC
-        // O usuário cadastra no formato "dd/MM/yyyy" e "HH:MM" no horário de Brasília
-        // Esta função retorna o timestamp UTC correspondente
         function parseGameDateTime(dateStr, timeStr) {
             if (!dateStr) return null;
             const parts = dateStr.split('/');
             if (parts.length !== 3) return null;
-            
+
             let time = timeStr || "12:00";
             time = time.replace('h', ':').replace('H', ':');
             const [hours, minutes] = time.split(':');
-            
+
             const year = parseInt(parts[2]);
             const month = parseInt(parts[1]) - 1;
             const day = parseInt(parts[0]);
             const hourBrasilia = parseInt(hours || '12');
             const minute = parseInt(minutes || '00');
-            
-            // Criar data no horário de Brasília (UTC-3) e converter para UTC
-            // new Date(year, month, day, hourBrasilia, minute) cria no fuso local do navegador
-            // Para evitar ambiguidade, usamos o método Date.UTC com ajuste manual de +3 horas
-            // Pois Brasília (UTC-3) = UTC - 3 horas, então para UTC somamos 3 horas
+
             const utcTimestamp = Date.UTC(year, month, day, hourBrasilia + 3, minute);
-            
+
             return utcTimestamp;
+        }
+
+        function formatDateTimeDisplay(dateStr, timeStr) {
+            if (!dateStr) return '';
+            let time = timeStr || '';
+            time = time.replace('h', ':').replace('H', ':');
+            return `${dateStr} ${time}`.trim();
         }
 
         function saveUserToLocalStorage(user) {
             if (user) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    phone: user.phone, name: user.name, uid: user.uid, savedAt: Date.now()
+                    phone: user.phone,
+                    name: user.name,
+                    uid: user.uid,
+                    savedAt: Date.now()
                 }));
             }
         }
@@ -914,7 +1025,7 @@
                     if (Date.now() - userData.savedAt < 30 * 24 * 60 * 60 * 1000) {
                         return { phone: userData.phone, name: userData.name, uid: userData.uid };
                     }
-                } catch(e) {}
+                } catch (e) {}
             }
             return null;
         }
@@ -927,21 +1038,21 @@
             return phoneRaw.replace(/\D/g, '');
         }
 
-        function normalizeGoogleDriveImage(url) { 
-            if(!url) return ""; 
-            try{ 
-                url=url.trim(); 
-                if(url.includes("/file/d/")){ 
-                    const id=url.split("/file/d/")[1].split("/")[0]; 
-                    return `https://lh3.googleusercontent.com/d/${id}`; 
-                } 
-                if(url.includes("drive.google.com/open?id=")){ 
-                    const id=url.split('id=')[1].split('&')[0]; 
-                    return `https://lh3.googleusercontent.com/d/${id}`; 
-                } 
-                return url; 
-            } catch(e){ 
-                return ''; 
+        function normalizeGoogleDriveImage(url) {
+            if (!url) return "";
+            try {
+                url = url.trim();
+                if (url.includes("/file/d/")) {
+                    const id = url.split("/file/d/")[1].split("/")[0];
+                    return `https://lh3.googleusercontent.com/d/${id}`;
+                }
+                if (url.includes("drive.google.com/open?id=")) {
+                    const id = url.split('id=')[1].split('&')[0];
+                    return `https://lh3.googleusercontent.com/d/${id}`;
+                }
+                return url;
+            } catch (e) {
+                return '';
             }
         }
 
@@ -960,85 +1071,85 @@
             return `⏱️ ${remaining.hours.toString().padStart(2, '0')}:${remaining.minutes.toString().padStart(2, '0')}:${remaining.seconds.toString().padStart(2, '0')}`;
         }
 
-function startCountdown(gameId, gameTimestamp, onUpdate) {
+        function startCountdown(gameId, gameTimestamp, onUpdate) {
 
-    if (countdownIntervals[gameId]) {
-        clearInterval(countdownIntervals[gameId]);
-    }
+            if (countdownIntervals[gameId]) {
+                clearInterval(countdownIntervals[gameId]);
+            }
 
-    let jaExpirou = false;
+            let jaExpirou = false;
 
-    const updateTimer = () => {
+            const updateTimer = () => {
 
-        const remaining = getTimeRemainingFromServer(gameTimestamp);
+                const remaining = getTimeRemainingFromServer(gameTimestamp);
 
-        onUpdate(remaining);
+                onUpdate(remaining);
 
-        if (remaining.expired && !jaExpirou) {
+                if (remaining.expired && !jaExpirou) {
 
-            jaExpirou = true;
+                    jaExpirou = true;
 
-            clearInterval(countdownIntervals[gameId]);
+                    clearInterval(countdownIntervals[gameId]);
 
-            delete countdownIntervals[gameId];
+                    delete countdownIntervals[gameId];
 
-            atualizarCardExpirado(gameId);
+                    atualizarCardExpirado(gameId);
 
-            loadActiveBets();
+                    loadActiveBets();
+
+                }
+
+            };
+
+            updateTimer();
+
+            countdownIntervals[gameId] = setInterval(updateTimer, 1000);
 
         }
 
-    };
+        function atualizarCardExpirado(gameId) {
 
-    updateTimer();
+            const timer = document.getElementById("countdown_" + gameId);
 
-    countdownIntervals[gameId] = setInterval(updateTimer, 1000);
+            if (!timer) return;
 
-}
+            timer.innerHTML = "⏰ ENCERRADO";
+            timer.classList.add("expired");
 
-function atualizarCardExpirado(gameId) {
+            const card = timer.closest(".game-card");
 
-    const timer = document.getElementById("countdown_" + gameId);
+            if (!card) return;
 
-    if (!timer) return;
+            card.classList.add("expired");
 
-    timer.innerHTML = "⏰ ENCERRADO";
-    timer.classList.add("expired");
+            const btn = card.querySelector(".btn-bet");
 
-    const card = timer.closest(".game-card");
+            if (btn) {
 
-    if (!card) return;
+                btn.remove();
 
-    card.classList.add("expired");
+            }
 
-    const btn = card.querySelector(".btn-bet");
+            card.querySelectorAll(".score-input").forEach(input => {
 
-    if (btn) {
+                input.disabled = true;
 
-        btn.remove();
+            });
 
-    }
+            const inputs = card.querySelector(".score-inputs");
 
-    card.querySelectorAll(".score-input").forEach(input => {
+            if (inputs) {
 
-        input.disabled = true;
+                inputs.insertAdjacentHTML(
+                    "afterend",
+                    `<div class="result-tag" style="background:#f8d7da;">
+                                ⏰ Prazo encerrado!
+                            </div>`
+                );
 
-    });
+            }
 
-    const inputs = card.querySelector(".score-inputs");
-
-    if (inputs) {
-
-        inputs.insertAdjacentHTML(
-            "afterend",
-            `<div class="result-tag" style="background:#f8d7da;">
-                ⏰ Prazo encerrado!
-            </div>`
-        );
-
-    }
-
-}
+        }
 
         async function fetchUserByPhone(phoneNumber) {
             const snapshot = await db.ref('users').once('value');
@@ -1067,29 +1178,29 @@ function atualizarCardExpirado(gameId) {
             await loadActiveBets();
             db.ref('games').on('value', () => {
 
-    loadAllReleasedGames();
+                loadAllReleasedGames();
 
-});
+            });
             db.ref('bets').on('value', () => {
 
-    loadFinishedGamesHistory();
+                loadFinishedGamesHistory();
 
-    loadRanking();
+                loadRanking();
 
-    loadActiveBets();
+                loadActiveBets();
 
-});
+            });
             db.ref('results').on('value', () => {
 
-    loadAllReleasedGames();
+                loadAllReleasedGames();
 
-    loadFinishedGamesHistory();
+                loadFinishedGamesHistory();
 
-    loadRanking();
+                loadRanking();
 
-    loadActiveBets();
+                loadActiveBets();
 
-});
+            });
             return true;
         }
 
@@ -1149,7 +1260,8 @@ function atualizarCardExpirado(gameId) {
 
         async function renderAllGames(games, teamsFlags) {
             if (!games.length) {
-                document.getElementById('gamesGridContainer').innerHTML = `<div class="no-games-message"><span style="font-size: 48px;">🎯</span><h3>Nenhum jogo liberado</h3></div>`;
+                document.getElementById('gamesGridContainer').innerHTML =
+                `<div class="no-games-message"><span style="font-size: 48px;">🎯</span><h3>Nenhum jogo liberado</h3></div>`;
                 return;
             }
             let html = '';
@@ -1159,31 +1271,35 @@ function atualizarCardExpirado(gameId) {
                 const flagUrlB = teamsFlags[teamB] ? normalizeGoogleDriveImage(teamsFlags[teamB]) : '';
                 const userHasBet = await hasUserBetOnGame(game.id);
                 const isExpired = getTimeRemainingFromServer(game.gameTimestamp).expired;
+                const dateDisplay = formatDateTimeDisplay(game.date, game.time);
                 html += `<div class="game-card ${isExpired ? 'expired' : ''}">
-                    <div class="game-header">
-                        <span class="group-badge">${game.group || 'Fase de Grupos'}</span>
-                        <span class="game-date">📅 ${game.date} - ${game.time || 'TBD'}</span>
-                    </div>
-                    <div class="countdown-timer" id="countdown_${game.id}">⏳ Carregando...</div>
-                    <div class="teams">
-                        <div class="team">${flagUrlA ? `<img src="${flagUrlA}" class="team-flag">` : '<div class="team-flag" style="font-size:40px;">🏳️</div>'}<div class="team-name">${escapeHtml(teamA)}</div></div>
-                        <div class="vs">VS</div>
-                        <div class="team">${flagUrlB ? `<img src="${flagUrlB}" class="team-flag">` : '<div class="team-flag" style="font-size:40px;">🏳️</div>'}<div class="team-name">${escapeHtml(teamB)}</div></div>
-                    </div>
-                    ${!userHasBet && !isExpired ? `<div class="score-inputs"><input type="number" id="scoreHome_${game.id}" class="score-input" placeholder="0"><span style="font-size:24px;">x</span><input type="number" id="scoreAway_${game.id}" class="score-input" placeholder="0"></div>
-                    <button class="btn-bet" data-game-id="${game.id}" data-teams="${game.teams}" data-game-timestamp="${game.gameTimestamp}">🎯 Enviar Palpite</button>
-                    <div style="font-size:11px; text-align:center; margin-top:10px;">Acertar placar = 6pts | Resultado = 3pts</div>` : userHasBet ? `<div class="result-tag">✅ Você já enviou seu palpite!</div>` : `<div class="result-tag" style="background:#f8d7da;">⏰ Prazo encerrado!</div>`}
-                </div>`;
+                            <div class="game-header">
+                                <span class="group-badge">${game.group || 'Fase de Grupos'}</span>
+                                <span class="game-date">📅 ${dateDisplay}</span>
+                            </div>
+                            <div class="countdown-timer" id="countdown_${game.id}">⏳ Carregando...</div>
+                            <div class="teams">
+                                <div class="team">${flagUrlA ? `<img src="${flagUrlA}" class="team-flag">` : '<div class="team-flag" style="font-size:40px;">🏳️</div>'}<div class="team-name">${escapeHtml(teamA)}</div></div>
+                                <div class="vs">VS</div>
+                                <div class="team">${flagUrlB ? `<img src="${flagUrlB}" class="team-flag">` : '<div class="team-flag" style="font-size:40px;">🏳️</div>'}<div class="team-name">${escapeHtml(teamB)}</div></div>
+                            </div>
+                            ${!userHasBet && !isExpired ? `<div class="score-inputs"><input type="number" id="scoreHome_${game.id}" class="score-input" placeholder="0"><span style="font-size:24px;">x</span><input type="number" id="scoreAway_${game.id}" class="score-input" placeholder="0"></div>
+                            <button class="btn-bet" data-game-id="${game.id}" data-teams="${game.teams}" data-game-timestamp="${game.gameTimestamp}">🎯 Enviar Palpite</button>
+                            <div style="font-size:11px; text-align:center; margin-top:10px;">Acertar placar = 6pts | Resultado = 3pts</div>` : userHasBet ? `<div class="result-tag">✅ Você já enviou seu palpite!</div>` : `<div class="result-tag" style="background:#f8d7da;">⏰ Prazo encerrado!</div>`}
+                        </div>`;
             }
             document.getElementById('gamesGridContainer').innerHTML = html;
             for (const game of games) {
                 const el = document.getElementById(`countdown_${game.id}`);
                 if (el && game.gameTimestamp) {
-                    startCountdown(game.id, game.gameTimestamp, (r) => { if(el) { el.textContent = formatCountdown(r); if(r.expired) el.classList.add('expired'); } });
+                    startCountdown(game.id, game.gameTimestamp, (r) => { if (el) { el.textContent = formatCountdown(r); if (r
+                                .expired) el.classList.add('expired'); } });
                 }
             }
             document.querySelectorAll('.btn-bet').forEach(btn => btn.addEventListener('click', async (e) => {
-                const gameId = btn.dataset.gameId, teamsText = btn.dataset.teams, ts = parseInt(btn.dataset.gameTimestamp);
+                const gameId = btn.dataset.gameId,
+                    teamsText = btn.dataset.teams,
+                    ts = parseInt(btn.dataset.gameTimestamp);
                 if (getTimeRemainingFromServer(ts).expired) { alert("Prazo expirado!"); return; }
                 await submitBetForGame(gameId, teamsText, ts);
             }));
@@ -1196,7 +1312,8 @@ function atualizarCardExpirado(gameId) {
             const scoreAway = parseInt(document.getElementById(`scoreAway_${gameId}`).value);
             if (isNaN(scoreHome) || isNaN(scoreAway)) { alert("Preencha o placar"); return; }
             if (await hasUserBetOnGame(gameId)) { alert("Você já apostou!"); return; }
-            await db.ref('bets').push({ userId: currentUser.phone, userName: currentUser.name, gameId, scoreA: scoreHome, scoreB: scoreAway, teams: teamsText, timestamp: firebase.database.ServerValue.TIMESTAMP });
+            await db.ref('bets').push({ userId: currentUser.phone, userName: currentUser.name, gameId, scoreA: scoreHome,
+                scoreB: scoreAway, teams: teamsText, timestamp: firebase.database.ServerValue.TIMESTAMP });
             alert(`✅ Palpite: ${scoreHome} x ${scoreAway}`);
             await loadActiveBets();
         }
@@ -1209,7 +1326,7 @@ function atualizarCardExpirado(gameId) {
             const betsSnap = await db.ref('bets').once('value');
             const bets = betsSnap.val() || {};
             const teamsFlags = await loadTeamsFlags();
-            
+
             let activeGames = [];
             for (let [id, game] of Object.entries(games)) {
                 const gameTimestamp = parseGameDateTime(game.date, game.time);
@@ -1218,69 +1335,69 @@ function atualizarCardExpirado(gameId) {
                     activeGames.push({ id, ...game, gameTimestamp });
                 }
             }
-            
+
             if (!activeGames.length) {
-                document.getElementById('activeBetsContainer').innerHTML = '<div style="text-align:center; padding:30px;">⚽ Nenhum jogo ativo no momento.</div>';
+                document.getElementById('activeBetsContainer').innerHTML =
+                    '<div style="text-align:center; padding:30px;">⚽ Nenhum jogo ativo no momento.</div>';
                 return;
             }
-            
-            activeGames.sort((a,b) => (a.gameTimestamp || 0) - (b.gameTimestamp || 0));
+
+            activeGames.sort((a, b) => (a.gameTimestamp || 0) - (b.gameTimestamp || 0));
             let html = '';
-            
+
             for (let game of activeGames) {
                 const [teamA, teamB] = game.teams.split(' x ');
                 const flagUrlA = teamsFlags[teamA] ? normalizeGoogleDriveImage(teamsFlags[teamA]) : '';
                 const flagUrlB = teamsFlags[teamB] ? normalizeGoogleDriveImage(teamsFlags[teamB]) : '';
                 const gameId = game.id;
-                
+                const dateDisplay = formatDateTimeDisplay(game.date, game.time);
+
                 let gameBets = [];
                 for (let key in bets) {
                     if (bets[key].gameId === gameId) {
                         gameBets.push(bets[key]);
                     }
                 }
-                gameBets.sort((a,b) => (a.userName || '').localeCompare(b.userName || ''));
-                
+                gameBets.sort((a, b) => (a.userName || '').localeCompare(b.userName || ''));
+
                 let betsHtml = '';
                 if (gameBets.length === 0) {
                     betsHtml = '<div style="padding: 16px; text-align:center;">Nenhum palpite registrado para este jogo ainda.</div>';
                 } else {
                     betsHtml = gameBets.map(bet => `
-                        <div class="bet-row">
-                            <span class="bet-user-name">${escapeHtml(bet.userName)}</span>
-                            <span class="bet-palpite">${bet.scoreA} x ${bet.scoreB}</span>
-                            <span class="bet-status">⏳</span>
-                        </div>
-                    `).join('');
+                            <div class="bet-row">
+                                <span class="bet-user-name">${escapeHtml(bet.userName)}</span>
+                                <span class="bet-palpite">${bet.scoreA} x ${bet.scoreB}</span>
+                                <span class="bet-status">⏳</span>
+                            </div>
+                        `).join('');
                 }
-                
-                const gameDateStr = `${game.date} ${game.time || ''}`;
-                
+
                 html += `
-                    <div class="active-bets-item">
-                        <div class="active-bets-header" onclick="toggleActiveBets(this)">
-                            <div class="game-info-summary">
-                                ${flagUrlA ? `<img src="${flagUrlA}" style="width:32px; height:32px; object-fit:contain;">` : '🏳️'}
-                                <span class="game-teams-summary">${escapeHtml(teamA)} x ${escapeHtml(teamB)}</span>
-                                ${flagUrlB ? `<img src="${flagUrlB}" style="width:32px; height:32px; object-fit:contain;">` : '🏳️'}
-                                <span class="game-date">📅 ${gameDateStr}</span>
+                        <div class="active-bets-item">
+                            <div class="active-bets-header" onclick="toggleActiveBets(this)">
+                                <div class="game-info-summary">
+                                    ${flagUrlA ? `<img src="${flagUrlA}" style="width:32px; height:32px; object-fit:contain;">` : '🏳️'}
+                                    <span class="game-teams-summary">${escapeHtml(teamA)} x ${escapeHtml(teamB)}</span>
+                                    ${flagUrlB ? `<img src="${flagUrlB}" style="width:32px; height:32px; object-fit:contain;">` : '🏳️'}
+                                    <span class="game-date">📅 ${dateDisplay}</span>
+                                </div>
+                                <div class="expand-icon">▼</div>
                             </div>
-                            <div class="expand-icon">▼</div>
-                        </div>
-                        <div class="active-bets-content">
-                            <div class="bets-inside-active">
-                                <div style="font-weight:700; margin-bottom:12px;">💬 Palpites (${gameBets.length}):</div>
-                                ${betsHtml}
-                                <div style="font-size:11px; margin-top:12px; text-align:center; color:#888;">* Jogo ainda não realizado - Resultado pendente</div>
+                            <div class="active-bets-content">
+                                <div class="bets-inside-active">
+                                    <div style="font-weight:700; margin-bottom:12px;">💬 Palpites (${gameBets.length}):</div>
+                                    ${betsHtml}
+                                    <div style="font-size:11px; margin-top:12px; text-align:center; color:#888;">* Jogo ainda não realizado - Resultado pendente</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
             }
-            
+
             document.getElementById('activeBetsContainer').innerHTML = html;
         }
-        
+
         window.toggleActiveBets = function(element) {
             element.classList.toggle('active');
             const content = element.nextElementSibling;
@@ -1299,82 +1416,91 @@ function atualizarCardExpirado(gameId) {
             const betsSnap = await db.ref('bets').once('value');
             const bets = betsSnap.val() || {};
             const teamsFlags = await loadTeamsFlags();
-            
+
             let finishedGames = [];
             for (let [id, game] of Object.entries(games)) {
                 if (results[id]) {
-                    finishedGames.push({ id, ...game, result: results[id] });
+                    const gameTimestamp = parseGameDateTime(game.date, game.time);
+                    finishedGames.push({ id, ...game, result: results[id], gameTimestamp });
                 }
             }
-            
-            if (!finishedGames.length) { 
-                document.getElementById('finishedGamesAccordion').innerHTML = '<div style="text-align:center; padding:30px;">⚽ Nenhum jogo finalizado.</div>'; 
-                return; 
+
+            if (!finishedGames.length) {
+                document.getElementById('finishedGamesAccordion').innerHTML =
+                    '<div style="text-align:center; padding:30px;">⚽ Nenhum jogo finalizado.</div>';
+                return;
             }
-            
-            finishedGames.sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+
+            // Ordenar por data/horário mais recente primeiro
+            finishedGames.sort((a, b) => (b.gameTimestamp || 0) - (a.gameTimestamp || 0));
+
             let html = '';
-            
+
             for (let game of finishedGames) {
                 const [teamA, teamB] = game.teams.split(' x ');
                 const flagUrlA = teamsFlags[teamA] ? normalizeGoogleDriveImage(teamsFlags[teamA]) : '';
                 const flagUrlB = teamsFlags[teamB] ? normalizeGoogleDriveImage(teamsFlags[teamB]) : '';
                 const realScore = `${game.result.scoreA} x ${game.result.scoreB}`;
-                
+                const dateDisplay = formatDateTimeDisplay(game.date, game.time);
+
                 let gameBets = [];
                 for (let key in bets) {
                     if (bets[key].gameId === game.id) {
                         gameBets.push(bets[key]);
                     }
                 }
-                
+
                 const betsWithPoints = gameBets.map(bet => {
-                    let points = 0, type = 'zero';
-                    if (bet.scoreA === game.result.scoreA && bet.scoreB === game.result.scoreB) { 
-                        points = 6; type = 'exact'; 
+                    let points = 0,
+                        type = 'zero';
+                    if (bet.scoreA === game.result.scoreA && bet.scoreB === game.result.scoreB) {
+                        points = 6;
+                        type = 'exact';
                     } else {
                         const betWinner = bet.scoreA > bet.scoreB ? 'A' : bet.scoreB > bet.scoreA ? 'B' : 'draw';
-                        const realWinner = game.result.scoreA > game.result.scoreB ? 'A' : game.result.scoreB > game.result.scoreA ? 'B' : 'draw';
-                        if (betWinner === realWinner) { points = 3; type = 'result'; }
+                        const realWinner = game.result.scoreA > game.result.scoreB ? 'A' : game.result.scoreB > game
+                            .result.scoreA ? 'B' : 'draw';
+                        if (betWinner === realWinner) { points = 3;
+                            type = 'result'; }
                     }
                     return { ...bet, points, type };
                 });
-                
-                betsWithPoints.sort((a,b) => b.points - a.points);
-                
+
+                betsWithPoints.sort((a, b) => b.points - a.points);
+
                 let betsHtml = betsWithPoints.length ? betsWithPoints.map(bet => `
-                    <div class="bet-row">
-                        <span class="bet-user-name">${escapeHtml(bet.userName)}</span>
-                        <span class="bet-palpite">${bet.scoreA} x ${bet.scoreB}</span>
-                        <span class="bet-points ${bet.type === 'exact' ? 'points-exact' : bet.type === 'result' ? 'points-result' : 'points-zero'}">${bet.type === 'exact' ? '🎯 +6 pts' : bet.type === 'result' ? '✅ +3 pts' : '❌ 0 pts'}</span>
-                    </div>
-                `).join('') : '<div style="padding:16px; text-align:center;">Sem palpites</div>';
-                
+                        <div class="bet-row">
+                            <span class="bet-user-name">${escapeHtml(bet.userName)}</span>
+                            <span class="bet-palpite">${bet.scoreA} x ${bet.scoreB}</span>
+                            <span class="bet-points ${bet.type === 'exact' ? 'points-exact' : bet.type === 'result' ? 'points-result' : 'points-zero'}">${bet.type === 'exact' ? '🎯 +6 pts' : bet.type === 'result' ? '✅ +3 pts' : '❌ 0 pts'}</span>
+                        </div>
+                    `).join('') : '<div style="padding:16px; text-align:center;">Sem palpites</div>';
+
                 html += `
-                    <div class="accordion-item">
-                        <div class="accordion-header" onclick="toggleAccordion(this)">
-                            <div class="game-info-summary">
-                                ${flagUrlA ? `<img src="${flagUrlA}" style="width:32px;">` : '🏳️'}
-                                <span class="game-teams-summary">${escapeHtml(teamA)} x ${escapeHtml(teamB)}</span>
-                                ${flagUrlB ? `<img src="${flagUrlB}" style="width:32px;">` : '🏳️'}
-                                <span class="game-real-result">📋 ${realScore}</span>
-                                <span class="game-date">📅 ${game.date}</span>
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <div class="game-info-summary">
+                                    ${flagUrlA ? `<img src="${flagUrlA}" style="width:32px;">` : '🏳️'}
+                                    <span class="game-teams-summary">${escapeHtml(teamA)} x ${escapeHtml(teamB)}</span>
+                                    ${flagUrlB ? `<img src="${flagUrlB}" style="width:32px;">` : '🏳️'}
+                                    <span class="game-real-result">📋 ${realScore}</span>
+                                    <span class="game-date">📅 ${dateDisplay}</span>
+                                </div>
+                                <div class="expand-icon">▼</div>
                             </div>
-                            <div class="expand-icon">▼</div>
-                        </div>
-                        <div class="accordion-content">
-                            <div class="bets-inside">
-                                <div style="font-weight:700; margin-bottom:12px;">💬 Palpites (${betsWithPoints.length}):</div>
-                                ${betsHtml}
+                            <div class="accordion-content">
+                                <div class="bets-inside">
+                                    <div style="font-weight:700; margin-bottom:12px;">💬 Palpites (${betsWithPoints.length}):</div>
+                                    ${betsHtml}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
             }
-            
+
             document.getElementById('finishedGamesAccordion').innerHTML = html;
         }
-        
+
         window.toggleAccordion = function(element) {
             element.classList.toggle('active');
             const content = element.nextElementSibling;
@@ -1385,141 +1511,136 @@ function atualizarCardExpirado(gameId) {
             }
         }
 
-async function loadRanking() {
-    const betsSnap = await db.ref('bets').once('value');
-    const bets = betsSnap.val() || {};
+        async function loadRanking() {
+            const betsSnap = await db.ref('bets').once('value');
+            const bets = betsSnap.val() || {};
 
-    const resultsSnap = await db.ref('results').once('value');
-    const results = resultsSnap.val() || {};
+            const resultsSnap = await db.ref('results').once('value');
+            const results = resultsSnap.val() || {};
 
-    const usersMap = new Map();
+            const usersMap = new Map();
 
-    for (let key in bets) {
+            for (let key in bets) {
 
-        const bet = bets[key];
-        const result = results[bet.gameId];
+                const bet = bets[key];
+                const result = results[bet.gameId];
 
-        if (!result) continue;
+                if (!result) continue;
 
-        if (!usersMap.has(bet.userId)) {
-            usersMap.set(bet.userId, {
-                name: bet.userName,
-                total: 0,
-                exact: 0,
-                scoredGames: 0
+                if (!usersMap.has(bet.userId)) {
+                    usersMap.set(bet.userId, {
+                        name: bet.userName,
+                        total: 0,
+                        exact: 0,
+                        scoredGames: 0
+                    });
+                }
+
+                const user = usersMap.get(bet.userId);
+
+                if (bet.scoreA === result.scoreA && bet.scoreB === result.scoreB) {
+
+                    user.total += 6;
+                    user.exact += 1;
+                    user.scoredGames += 1;
+
+                } else {
+
+                    const betWinner =
+                        bet.scoreA > bet.scoreB ? 'A' :
+                        bet.scoreB > bet.scoreA ? 'B' : 'draw';
+
+                    const realWinner =
+                        result.scoreA > result.scoreB ? 'A' :
+                        result.scoreB > result.scoreA ? 'B' : 'draw';
+
+                    if (betWinner === realWinner) {
+                        user.total += 3;
+                        user.scoredGames += 1;
+                    }
+                }
+            }
+
+            let ranking = Array.from(usersMap.entries())
+                .map(([phone, data]) => ({
+                    phone,
+                    name: data.name,
+                    points: data.total,
+                    exact: data.exact,
+                    scoredGames: data.scoredGames
+                }))
+                .sort((a, b) => {
+
+                    if (b.points !== a.points)
+                        return b.points - a.points;
+
+                    if (b.exact !== a.exact)
+                        return b.exact - a.exact;
+
+                    if (b.scoredGames !== a.scoredGames)
+                        return b.scoredGames - a.scoredGames;
+
+                    return 0;
+                });
+
+            if (!ranking.length) {
+                document.getElementById('rankingTableContainer').innerHTML =
+                    '<div style="padding:20px; text-align:center;">Nenhuma pontuação ainda.</div>';
+                return;
+            }
+
+            let html = '<table class="ranking-table">';
+            html += '<thead>';
+            html += '<tr>';
+            html += '<th>Pos</th>';
+            html += '<th>Participante</th>';
+            html += '<th>Pontos</th>';
+            html += '</tr>';
+            html += '</thead><tbody>';
+
+            let posicao = 1;
+
+            ranking.forEach((user, index) => {
+
+                if (index > 0) {
+
+                    const anterior = ranking[index - 1];
+
+                    const empatado =
+                        user.points === anterior.points &&
+                        user.exact === anterior.exact &&
+                        user.scoredGames === anterior.scoredGames;
+
+                    if (!empatado) {
+                        posicao = index + 1;
+                    }
+                }
+
+                let medalha = "";
+
+                if (posicao === 1) medalha = "🥇 ";
+                else if (posicao === 2) medalha = "🥈 ";
+                else if (posicao === 3) medalha = "🥉 ";
+
+                html += `
+                            <tr onclick="showUserPointsModal('${user.phone}', '${escapeHtml(user.name)}', ${user.points})">
+                                <td><strong>${medalha}${posicao}º</strong></td>
+                                <td>${escapeHtml(user.name)}</td>
+                                <td><strong style="color:#009c3b;">${user.points}</strong></td>
+                            </tr>
+                        `;
             });
+
+            html += "</tbody></table>";
+
+            html += `
+                        <div style="font-size:11px; margin-top:12px; text-align:center;">
+                            ⭐ Clique no participante para ver detalhes
+                        </div>
+                    `;
+
+            document.getElementById('rankingTableContainer').innerHTML = html;
         }
-
-        const user = usersMap.get(bet.userId);
-
-        // Acertou o placar exato
-        if (bet.scoreA === result.scoreA && bet.scoreB === result.scoreB) {
-
-            user.total += 6;
-            user.exact += 1;
-            user.scoredGames += 1;
-
-        } else {
-
-            const betWinner =
-                bet.scoreA > bet.scoreB ? 'A' :
-                bet.scoreB > bet.scoreA ? 'B' : 'draw';
-
-            const realWinner =
-                result.scoreA > result.scoreB ? 'A' :
-                result.scoreB > result.scoreA ? 'B' : 'draw';
-
-            if (betWinner === realWinner) {
-                user.total += 3;
-                user.scoredGames += 1;
-            }
-        }
-    }
-
-    let ranking = Array.from(usersMap.entries())
-        .map(([phone, data]) => ({
-            phone,
-            name: data.name,
-            points: data.total,
-            exact: data.exact,
-            scoredGames: data.scoredGames
-        }))
-        .sort((a, b) => {
-
-            // 1º critério: Pontos
-            if (b.points !== a.points)
-                return b.points - a.points;
-
-            // 2º critério: Placares exatos
-            if (b.exact !== a.exact)
-                return b.exact - a.exact;
-
-            // 3º critério: Jogos pontuados
-            if (b.scoredGames !== a.scoredGames)
-                return b.scoredGames - a.scoredGames;
-
-            // Empate real
-            return 0;
-        });
-
-    if (!ranking.length) {
-        document.getElementById('rankingTableContainer').innerHTML =
-            '<div style="padding:20px; text-align:center;">Nenhuma pontuação ainda.</div>';
-        return;
-    }
-
-    let html = '<table class="ranking-table">';
-    html += '<thead>';
-    html += '<tr>';
-    html += '<th>Pos</th>';
-    html += '<th>Participante</th>';
-    html += '<th>Pontos</th>';
-    html += '</tr>';
-    html += '</thead><tbody>';
-
-    let posicao = 1;
-
-    ranking.forEach((user, index) => {
-
-        if (index > 0) {
-
-            const anterior = ranking[index - 1];
-
-            const empatado =
-                user.points === anterior.points &&
-                user.exact === anterior.exact &&
-                user.scoredGames === anterior.scoredGames;
-
-            if (!empatado) {
-                posicao = index + 1;
-            }
-        }
-
-        let medalha = "";
-
-        if (posicao === 1) medalha = "🥇 ";
-        else if (posicao === 2) medalha = "🥈 ";
-        else if (posicao === 3) medalha = "🥉 ";
-
-        html += `
-            <tr onclick="showUserPointsModal('${user.phone}', '${escapeHtml(user.name)}', ${user.points})">
-                <td><strong>${medalha}${posicao}º</strong></td>
-                <td>${escapeHtml(user.name)}</td>
-                <td><strong style="color:#009c3b;">${user.points}</strong></td>
-            </tr>
-        `;
-    });
-
-    html += "</tbody></table>";
-
-    html += `
-        <div style="font-size:11px; margin-top:12px; text-align:center;">
-            ⭐ Clique no participante para ver detalhes
-        </div>
-    `;
-
-    document.getElementById('rankingTableContainer').innerHTML = html;
-}
 
         async function showUserPointsModal(userPhone, userName, userPoints) {
             const betsSnap = await db.ref('bets').once('value');
@@ -1528,7 +1649,7 @@ async function loadRanking() {
             const results = resultsSnap.val() || {};
             const gamesSnap = await db.ref('games').once('value');
             const games = gamesSnap.val() || {};
-            
+
             const userBets = [];
             for (let key in bets) {
                 const bet = bets[key];
@@ -1536,73 +1657,77 @@ async function loadRanking() {
                     const game = games[bet.gameId];
                     const result = results[bet.gameId];
                     if (game && result) {
-                        let points = 0, type = '';
-                        if (bet.scoreA === result.scoreA && bet.scoreB === result.scoreB) { 
-                            points = 6; type = 'exact'; 
+                        let points = 0,
+                            type = '';
+                        if (bet.scoreA === result.scoreA && bet.scoreB === result.scoreB) {
+                            points = 6;
+                            type = 'exact';
                         } else {
                             const betWinner = bet.scoreA > bet.scoreB ? 'A' : bet.scoreB > bet.scoreA ? 'B' : 'draw';
-                            const realWinner = result.scoreA > result.scoreB ? 'A' : result.scoreB > result.scoreA ? 'B' : 'draw';
-                            if (betWinner === realWinner) { points = 3; type = 'result'; }
+                            const realWinner = result.scoreA > result.scoreB ? 'A' : result.scoreB > result.scoreA ? 'B' :
+                                'draw';
+                            if (betWinner === realWinner) { points = 3;
+                                type = 'result'; }
                         }
                         if (points > 0) {
-                            userBets.push({ 
-                                gameName: game.teams, 
-                                gameDate: game.date, 
-                                betScore: `${bet.scoreA} x ${bet.scoreB}`, 
-                                realScore: `${result.scoreA} x ${result.scoreB}`, 
-                                points, 
-                                type 
+                            userBets.push({
+                                gameName: game.teams,
+                                gameDate: formatDateTimeDisplay(game.date, game.time),
+                                betScore: `${bet.scoreA} x ${bet.scoreB}`,
+                                realScore: `${result.scoreA} x ${result.scoreB}`,
+                                points,
+                                type
                             });
                         }
                     }
                 }
             }
-            
-            userBets.sort((a,b) => b.points - a.points);
-            
+
+            userBets.sort((a, b) => b.points - a.points);
+
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
             modal.innerHTML = `
-                <div class="modal-container">
-                    <div class="modal-header">
-                        <h3>${escapeHtml(userName)} - ${userPoints} pts</h3>
-                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="user-points-summary">
-                            <strong>Total: ${userPoints} pontos</strong>
-                            <div class="points-breakdown">
-                                <div class="breakdown-item">
-                                    <div class="breakdown-number">${userBets.filter(b=>b.type==='exact').length}</div>
-                                    <div class="breakdown-label">Placar Exato (6pts)</div>
+                        <div class="modal-container">
+                            <div class="modal-header">
+                                <h3>${escapeHtml(userName)} - ${userPoints} pts</h3>
+                                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="user-points-summary">
+                                    <strong>Total: ${userPoints} pontos</strong>
+                                    <div class="points-breakdown">
+                                        <div class="breakdown-item">
+                                            <div class="breakdown-number">${userBets.filter(b=>b.type==='exact').length}</div>
+                                            <div class="breakdown-label">Placar Exato (6pts)</div>
+                                        </div>
+                                        <div class="breakdown-item">
+                                            <div class="breakdown-number">${userBets.filter(b=>b.type==='result').length}</div>
+                                            <div class="breakdown-label">Resultado (3pts)</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="breakdown-item">
-                                    <div class="breakdown-number">${userBets.filter(b=>b.type==='result').length}</div>
-                                    <div class="breakdown-label">Resultado (3pts)</div>
-                                </div>
+                                ${userBets.length ? userBets.map(bet => `
+                                    <div class="game-detail-card ${bet.type}">
+                                        <div class="game-detail-line">
+                                            <span class="game-detail-teams">📅 ${bet.gameDate} ${escapeHtml(bet.gameName)} [${bet.realScore}]</span>
+                                            <span class="game-detail-points ${bet.type}">${bet.type === 'exact' ? '🎯 +6pts' : '✅ +3pts'}</span>
+                                        </div>
+                                        <div class="game-detail-scores">
+                                            <span>Palpite: ${bet.betScore}</span>
+                                        </div>
+                                    </div>
+                                `).join('') : '<div class="empty-points">⚽ Nenhum ponto conquistado ainda.</div>'}
                             </div>
                         </div>
-                        ${userBets.length ? userBets.map(bet => `
-                            <div class="game-detail-card ${bet.type}">
-                                <div class="game-detail-line">
-                                    <span class="game-detail-teams">📅 ${bet.gameDate} ${escapeHtml(bet.gameName)} [${bet.realScore}]</span>
-                                    <span class="game-detail-points ${bet.type}">${bet.type === 'exact' ? '🎯 +6pts' : '✅ +3pts'}</span>
-                                </div>
-                                <div class="game-detail-scores">
-                                    <span>Palpite: ${bet.betScore}</span>
-                                </div>
-                            </div>
-                        `).join('') : '<div class="empty-points">⚽ Nenhum ponto conquistado ainda.</div>'}
-                    </div>
-                </div>
-            `;
+                    `;
             document.body.appendChild(modal);
-            modal.addEventListener('click', e => { if(e.target === modal) modal.remove(); });
+            modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
         }
 
-        function escapeHtml(str) { 
+        function escapeHtml(str) {
             if (!str) return '';
-            return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); 
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' } [m]));
         }
 
         function logout() {
@@ -1615,9 +1740,23 @@ async function loadRanking() {
             alert("Você saiu do bolão.");
         }
 
+        // Tabs functionality
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                // Add active class to clicked tab
+                this.classList.add('active');
+                const tabId = this.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
         document.getElementById('loginBtn').onclick = doLogin;
         document.getElementById('logoutBtn').onclick = logout;
-        document.getElementById('phoneNumberInput').addEventListener('keypress', e => { if(e.key === 'Enter') doLogin(); });
+        document.getElementById('phoneNumberInput').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
         tryAutoLogin();
     </script>
 </body>
