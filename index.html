@@ -332,6 +332,29 @@
             cursor: not-allowed;
         }
 
+        .btn-edit-bet {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            width: 100%;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-edit-bet:active {
+            transform: scale(0.98);
+        }
+
+        .btn-edit-bet:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+        }
+
         .result-tag {
             background: #d4edda;
             padding: 10px;
@@ -1235,9 +1258,19 @@
             const betsSnap = await db.ref('bets').once('value');
             const bets = betsSnap.val() || {};
             for (let key in bets) {
-                if (bets[key].userId === currentUser.phone && bets[key].gameId === gameId) return true;
+                if (bets[key].userId === currentUser.phone && bets[key].gameId === gameId) return key;
             }
             return false;
+        }
+
+        async function getUserBetKey(gameId) {
+            if (!currentUser) return null;
+            const betsSnap = await db.ref('bets').once('value');
+            const bets = betsSnap.val() || {};
+            for (let key in bets) {
+                if (bets[key].userId === currentUser.phone && bets[key].gameId === gameId) return key;
+            }
+            return null;
         }
 
         async function loadAllReleasedGames() {
@@ -1269,9 +1302,19 @@
                 const [teamA, teamB] = game.teams.split(' x ');
                 const flagUrlA = teamsFlags[teamA] ? normalizeGoogleDriveImage(teamsFlags[teamA]) : '';
                 const flagUrlB = teamsFlags[teamB] ? normalizeGoogleDriveImage(teamsFlags[teamB]) : '';
-                const userHasBet = await hasUserBetOnGame(game.id);
+                const userBetKey = await getUserBetKey(game.id);
+                const userHasBet = !!userBetKey;
                 const isExpired = getTimeRemainingFromServer(game.gameTimestamp).expired;
                 const dateDisplay = formatDateTimeDisplay(game.date, game.time);
+
+                // Buscar aposta atual do usuário se existir
+                let userBet = null;
+                if (userBetKey) {
+                    const betsSnap = await db.ref('bets').once('value');
+                    const bets = betsSnap.val() || {};
+                    userBet = bets[userBetKey];
+                }
+
                 html += `<div class="game-card ${isExpired ? 'expired' : ''}">
                             <div class="game-header">
                                 <span class="group-badge">${game.group || 'Fase de Grupos'}</span>
@@ -1283,9 +1326,22 @@
                                 <div class="vs">VS</div>
                                 <div class="team">${flagUrlB ? `<img src="${flagUrlB}" class="team-flag">` : '<div class="team-flag" style="font-size:40px;">🏳️</div>'}<div class="team-name">${escapeHtml(teamB)}</div></div>
                             </div>
-                            ${!userHasBet && !isExpired ? `<div class="score-inputs"><input type="number" id="scoreHome_${game.id}" class="score-input" placeholder="0"><span style="font-size:24px;">x</span><input type="number" id="scoreAway_${game.id}" class="score-input" placeholder="0"></div>
-                            <button class="btn-bet" data-game-id="${game.id}" data-teams="${game.teams}" data-game-timestamp="${game.gameTimestamp}">🎯 Enviar Palpite</button>
-                            <div style="font-size:11px; text-align:center; margin-top:10px;">Acertar placar = 6pts | Resultado = 3pts</div>` : userHasBet ? `<div class="result-tag">✅ Você já enviou seu palpite!</div>` : `<div class="result-tag" style="background:#f8d7da;">⏰ Prazo encerrado!</div>`}
+                            ${!isExpired ? `
+                                <div class="score-inputs">
+                                    <input type="number" id="scoreHome_${game.id}" class="score-input" placeholder="0" value="${userBet ? userBet.scoreA : ''}" ${userHasBet ? '' : ''}>
+                                    <span style="font-size:24px;">x</span>
+                                    <input type="number" id="scoreAway_${game.id}" class="score-input" placeholder="0" value="${userBet ? userBet.scoreB : ''}" ${userHasBet ? '' : ''}>
+                                </div>
+                                ${userHasBet ? `
+                                    <button class="btn-edit-bet" data-game-id="${game.id}" data-teams="${game.teams}" data-game-timestamp="${game.gameTimestamp}" data-bet-key="${userBetKey}">✏️ Editar Palpite</button>
+                                    <div style="font-size:11px; text-align:center; margin-top:5px;">Seu palpite atual: ${userBet.scoreA} x ${userBet.scoreB}</div>
+                                ` : `
+                                    <button class="btn-bet" data-game-id="${game.id}" data-teams="${game.teams}" data-game-timestamp="${game.gameTimestamp}">🎯 Enviar Palpite</button>
+                                `}
+                                <div style="font-size:11px; text-align:center; margin-top:10px;">Acertar placar = 6pts | Resultado = 3pts</div>
+                            ` : `
+                                ${userHasBet ? `<div class="result-tag">✅ Você enviou palpite: ${userBet.scoreA} x ${userBet.scoreB}</div>` : `<div class="result-tag" style="background:#f8d7da;">⏰ Prazo encerrado!</div>`}
+                            `}
                         </div>`;
             }
             document.getElementById('gamesGridContainer').innerHTML = html;
@@ -1303,6 +1359,15 @@
                 if (getTimeRemainingFromServer(ts).expired) { alert("Prazo expirado!"); return; }
                 await submitBetForGame(gameId, teamsText, ts);
             }));
+
+            document.querySelectorAll('.btn-edit-bet').forEach(btn => btn.addEventListener('click', async (e) => {
+                const gameId = btn.dataset.gameId,
+                    teamsText = btn.dataset.teams,
+                    ts = parseInt(btn.dataset.gameTimestamp);
+                const betKey = btn.dataset.betKey;
+                if (getTimeRemainingFromServer(ts).expired) { alert("Prazo expirado!"); return; }
+                await editBetForGame(gameId, teamsText, ts, betKey);
+            }));
         }
 
         async function submitBetForGame(gameId, teamsText, gameTimestamp) {
@@ -1315,6 +1380,27 @@
             await db.ref('bets').push({ userId: currentUser.phone, userName: currentUser.name, gameId, scoreA: scoreHome,
                 scoreB: scoreAway, teams: teamsText, timestamp: firebase.database.ServerValue.TIMESTAMP });
             alert(`✅ Palpite: ${scoreHome} x ${scoreAway}`);
+            await loadAllReleasedGames();
+            await loadActiveBets();
+        }
+
+        async function editBetForGame(gameId, teamsText, gameTimestamp, betKey) {
+            if (!currentUser) return;
+            if (getTimeRemainingFromServer(gameTimestamp).expired) { alert("Prazo expirado!"); return; }
+            const scoreHome = parseInt(document.getElementById(`scoreHome_${gameId}`).value);
+            const scoreAway = parseInt(document.getElementById(`scoreAway_${gameId}`).value);
+            if (isNaN(scoreHome) || isNaN(scoreAway)) { alert("Preencha o placar"); return; }
+
+            const confirmEdit = confirm(`Deseja editar seu palpite para ${scoreHome} x ${scoreAway}?`);
+            if (!confirmEdit) return;
+
+            await db.ref(`bets/${betKey}`).update({
+                scoreA: scoreHome,
+                scoreB: scoreAway,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+            alert(`✅ Palpite atualizado: ${scoreHome} x ${scoreAway}`);
+            await loadAllReleasedGames();
             await loadActiveBets();
         }
 
@@ -1355,10 +1441,13 @@
                 let gameBets = [];
                 for (let key in bets) {
                     if (bets[key].gameId === gameId) {
-                        gameBets.push(bets[key]);
+                        gameBets.push({ ...bets[key], betKey: key });
                     }
                 }
                 gameBets.sort((a, b) => (a.userName || '').localeCompare(b.userName || ''));
+
+                // Verifica se o usuário atual tem aposta neste jogo
+                const userBet = gameBets.find(b => b.userId === currentUser.phone);
 
                 let betsHtml = '';
                 if (gameBets.length === 0) {
@@ -1366,11 +1455,21 @@
                 } else {
                     betsHtml = gameBets.map(bet => `
                             <div class="bet-row">
-                                <span class="bet-user-name">${escapeHtml(bet.userName)}</span>
+                                <span class="bet-user-name">${escapeHtml(bet.userName)} ${bet.userId === currentUser.phone ? '⭐' : ''}</span>
                                 <span class="bet-palpite">${bet.scoreA} x ${bet.scoreB}</span>
                                 <span class="bet-status">⏳</span>
                             </div>
                         `).join('');
+                }
+
+                // Adicionar botão de edição se o usuário tiver aposta
+                let editButtonHtml = '';
+                if (userBet) {
+                    editButtonHtml = `
+                            <div style="margin-top: 12px;">
+                                <button class="btn-edit-bet" onclick="editBetFromActive('${gameId}', '${game.teams}', ${game.gameTimestamp}, '${userBet.betKey}')">✏️ Editar meu palpite</button>
+                            </div>
+                        `;
                 }
 
                 html += `
@@ -1388,6 +1487,7 @@
                                 <div class="bets-inside-active">
                                     <div style="font-weight:700; margin-bottom:12px;">💬 Palpites (${gameBets.length}):</div>
                                     ${betsHtml}
+                                    ${editButtonHtml}
                                     <div style="font-size:11px; margin-top:12px; text-align:center; color:#888;">* Jogo ainda não realizado - Resultado pendente</div>
                                 </div>
                             </div>
@@ -1397,6 +1497,63 @@
 
             document.getElementById('activeBetsContainer').innerHTML = html;
         }
+
+        // Função para editar aposta a partir da aba de palpites ativos
+        window.editBetFromActive = function(gameId, teamsText, gameTimestamp, betKey) {
+            if (!currentUser) return;
+            if (getTimeRemainingFromServer(gameTimestamp).expired) { alert("Prazo expirado!"); return; }
+
+            // Buscar a aposta atual
+            db.ref(`bets/${betKey}`).once('value', async (snapshot) => {
+                const bet = snapshot.val();
+                if (!bet) { alert("Aposta não encontrada!"); return; }
+
+                // Criar um modal para edição
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                        <div class="modal-container">
+                            <div class="modal-header">
+                                <h3>✏️ Editar Palpite</h3>
+                                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <div style="text-align:center; margin-bottom:20px;">
+                                    <strong>${escapeHtml(teamsText)}</strong>
+                                </div>
+                                <div class="score-inputs" style="justify-content:center;">
+                                    <input type="number" id="editScoreHome" class="score-input" placeholder="0" value="${bet.scoreA}">
+                                    <span style="font-size:24px;">x</span>
+                                    <input type="number" id="editScoreAway" class="score-input" placeholder="0" value="${bet.scoreB}">
+                                </div>
+                                <button id="saveEditBtn" class="btn-bet" style="margin-top:16px;">💾 Salvar Alteração</button>
+                                <button onclick="this.closest('.modal-overlay').remove()" class="btn-bet" style="background:#6c757d; margin-top:8px;">Cancelar</button>
+                            </div>
+                        </div>
+                    `;
+                document.body.appendChild(modal);
+
+                document.getElementById('saveEditBtn').addEventListener('click', async () => {
+                    const scoreHome = parseInt(document.getElementById('editScoreHome').value);
+                    const scoreAway = parseInt(document.getElementById('editScoreAway').value);
+                    if (isNaN(scoreHome) || isNaN(scoreAway)) { alert("Preencha o placar corretamente"); return; }
+
+                    if (getTimeRemainingFromServer(gameTimestamp).expired) { alert("Prazo expirado!"); return; }
+
+                    await db.ref(`bets/${betKey}`).update({
+                        scoreA: scoreHome,
+                        scoreB: scoreAway,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    alert(`✅ Palpite atualizado: ${scoreHome} x ${scoreAway}`);
+                    modal.remove();
+                    await loadAllReleasedGames();
+                    await loadActiveBets();
+                });
+
+                modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+            });
+        };
 
         window.toggleActiveBets = function(element) {
             element.classList.toggle('active');
@@ -1470,7 +1627,7 @@
 
                 let betsHtml = betsWithPoints.length ? betsWithPoints.map(bet => `
                         <div class="bet-row">
-                            <span class="bet-user-name">${escapeHtml(bet.userName)}</span>
+                            <span class="bet-user-name">${escapeHtml(bet.userName)} ${bet.userId === currentUser?.phone ? '⭐' : ''}</span>
                             <span class="bet-palpite">${bet.scoreA} x ${bet.scoreB}</span>
                             <span class="bet-points ${bet.type === 'exact' ? 'points-exact' : bet.type === 'result' ? 'points-result' : 'points-zero'}">${bet.type === 'exact' ? '🎯 +6 pts' : bet.type === 'result' ? '✅ +3 pts' : '❌ 0 pts'}</span>
                         </div>
@@ -1625,7 +1782,7 @@
                 html += `
                             <tr onclick="showUserPointsModal('${user.phone}', '${escapeHtml(user.name)}', ${user.points})">
                                 <td><strong>${medalha}${posicao}º</strong></td>
-                                <td>${escapeHtml(user.name)}</td>
+                                <td>${escapeHtml(user.name)} ${user.phone === currentUser?.phone ? '⭐' : ''}</td>
                                 <td><strong style="color:#009c3b;">${user.points}</strong></td>
                             </tr>
                         `;
